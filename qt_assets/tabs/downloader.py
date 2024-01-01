@@ -331,8 +331,7 @@ class DownloadTab(QWidget):
         self.set_thumbnail(item, column)
 
     def get_proxies(self):
-        proxies = self.proxies.text().replace(' ', '')
-        if proxies != '':
+        if (proxies := self.proxies.text().replace(' ', '')) != '':
             proxies = proxies.split(',')
             return {proxy.split(':')[0]: proxy for proxy in proxies}
         else:
