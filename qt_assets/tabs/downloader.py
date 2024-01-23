@@ -293,10 +293,10 @@ class DownloadTab(QWidget):
         self.proxies.setEnabled(False)
         self.stream_tree.setEnabled(False)
 
-        if job_id is 'load_streams':
+        if job_id == 'load_streams':
             thread.started.connect(worker.load_streams)
             self.btn_download.setText(f'Select Streams to Download')
-        elif job_id is 'download_streams':
+        elif job_id == 'download_streams':
             thread.started.connect(worker.download_streams)
         thread.start()
         self.thread_count += 1
