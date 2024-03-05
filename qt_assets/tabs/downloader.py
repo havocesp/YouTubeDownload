@@ -46,12 +46,12 @@ class StreamLoader(QObject):
         try:
             print('get video id')
             print(extract.video_id(self.__download_manager.url.text()))
-            self.sig_step.emit(self.id, f'Loading video')
+            self.sig_step.emit(self.id, 'Loading video')
             loaded_url = YouTube(self.__download_manager.url.text(), proxies=proxies)
             self.sig_step.emit(self.id, f'Loaded video: {loaded_url.title}')
             self.sig_msg.emit(f'Found {loaded_url.title}')
             if self.__abort:
-                self.sig_progress_status.emit(f'Aborted!')
+                self.sig_progress_status.emit('Aborted!')
                 self.sig_done.emit(self.id)
                 return
             self.__download_manager.videos.append(loaded_url)
@@ -61,7 +61,7 @@ class StreamLoader(QObject):
             if 'playlist' in self.__download_manager.url.text():
                 regex_search(r'(?:list=|\/)([0-9A-Za-z_-]{11}).*', self.__download_manager.url.text(), group=1)
                 loaded_url = Playlist(self.__download_manager.url.text())
-                self.sig_msg.emit(f'Loaded playlist. Discovering videos...')
+                self.sig_msg.emit('Loaded playlist. Discovering videos...')
                 loaded_url.populate_video_urls()
                 i = 0
                 self.sig_progress_status.emit(0)
@@ -69,14 +69,14 @@ class StreamLoader(QObject):
                 for video_url in loaded_url.video_urls:
                     self.sig_step.emit(self.id, f'Loading video {i}')
                     if self.__abort:
-                        self.sig_progress_status.emit(f'Aborted!')
+                        self.sig_progress_status.emit('Aborted!')
                         self.sig_done.emit(self.id)
                         return
                     self.sig_progress_total.emit(int((i / (len(loaded_url.video_urls) * 2)) * 100))
                     vid = YouTube(video_url, proxies=proxies)
                     self.sig_step.emit(self.id, f'Loaded video: {vid.title}')
                     if self.__abort:
-                        self.sig_progress_status.emit(f'Aborted!')
+                        self.sig_progress_status.emit('Aborted!')
                         self.sig_done.emit(self.id)
                         return
                     self.sig_msg.emit(f'Found {vid.title}')
@@ -96,14 +96,14 @@ class StreamLoader(QObject):
             self.sig_done.emit(self.id)
             return
 
-        self.sig_msg.emit(f'Loading Streams..')
+        self.sig_msg.emit('Loading Streams..')
         print('loading streams')
         i = 0
         for video in self.__download_manager.videos:
             self.sig_progress_status.emit(0)
             self.sig_step.emit(self.id, f'Loading streams for video {i}')
             if self.__abort:
-                self.sig_progress_status.emit(f'Aborted!')
+                self.sig_progress_status.emit('Aborted!')
                 self.sig_done.emit(self.id)
                 return
             audio_streams = QTreeWidgetItem(['Audio Only'])
@@ -114,7 +114,7 @@ class StreamLoader(QObject):
             for stream in self.__download_manager.streams:
                 self.sig_step.emit(self.id, f'Loading stream {x}')
                 if self.__abort:
-                    self.sig_progress_status.emit(f'Aborted!')
+                    self.sig_progress_status.emit('Aborted!')
                     self.sig_done.emit(self.id)
                     return
                 self.sig_msg.emit(f'Video {i + 1}/{len(self.__download_manager.videos)}: '
@@ -129,7 +129,7 @@ class StreamLoader(QObject):
                        self.__download_manager, video, stream)
                     self.sig_step.emit(self.id, f'Loaded stream {x}')
                     if self.__abort:
-                        self.sig_progress_status.emit(f'Aborted!')
+                        self.sig_progress_status.emit('Aborted!')
                         self.sig_done.emit(self.id)
                         return
                     audio_streams.addChild(stream_item)
@@ -143,7 +143,7 @@ class StreamLoader(QObject):
                        self.__download_manager, video, stream)
                     self.sig_step.emit(self.id, f'Loaded stream {x}')
                     if self.__abort:
-                        self.sig_progress_status.emit(f'Aborted!')
+                        self.sig_progress_status.emit('Aborted!')
                         self.sig_done.emit(self.id)
                         return
                     tree_item.addChild(stream_item)
@@ -153,14 +153,14 @@ class StreamLoader(QObject):
             tree_item.addChild(audio_streams)
             self.sig_step.emit(self.id, f'Adding video {i} to tree')
             if self.__abort:
-                self.sig_progress_status.emit(f'Aborted!')
+                self.sig_progress_status.emit('Aborted!')
                 self.sig_done.emit(self.id)
                 return
             self.__download_manager.stream_tree.addTopLevelItem(tree_item)
             i += 1
             self.sig_progress_status.emit(100)
             self.sig_progress_total.emit(int((i / (len(self.__download_manager.videos) * 2)) * 100) + 50)
-        self.sig_msg.emit(f'Streams Loaded!')
+        self.sig_msg.emit('Streams Loaded!')
         self.sig_done.emit(self.id)
 
     @pyqtSlot()
@@ -173,7 +173,7 @@ class StreamLoader(QObject):
             self.sig_step.emit(self.id, f'Downloading stream {i}')
             self.sig_msg.emit(f'Downloading Stream ({i + 1}/{len(self.__download_manager.streams_to_download)})...')
             if self.__abort:
-                self.sig_progress_status.emit(f'Aborted!')
+                self.sig_progress_status.emit('Aborted!')
                 self.sig_done.emit(self.id)
                 break
             self.current_file_size = stream_item.stream.filesize
@@ -200,9 +200,9 @@ class StreamLoader(QObject):
                                    filename=filename, progress_callback=self.update_progress_bar,
                                    video_and_stream=(stream_item.video, stream_item.stream),
                                    proxies=self.__download_manager.get_proxies())
-            self.sig_step.emit(self.id, f'Download finished')
+            self.sig_step.emit(self.id, 'Download finished')
             if self.__abort:
-                self.sig_progress_status.emit(f'Aborted!')
+                self.sig_progress_status.emit('Aborted!')
                 self.sig_done.emit(self.id)
                 break
             i += 1
@@ -295,7 +295,7 @@ class DownloadTab(QWidget):
 
         if job_id is 'load_streams':
             thread.started.connect(worker.load_streams)
-            self.btn_download.setText(f'Select Streams to Download')
+            self.btn_download.setText('Select Streams to Download')
         elif job_id is 'download_streams':
             thread.started.connect(worker.download_streams)
         thread.start()
@@ -327,7 +327,7 @@ class DownloadTab(QWidget):
             self.btn_download.setText(f'Download {len(self.streams_to_download)} Stream(s)')
         else:
             self.btn_download.setEnabled(False)
-            self.btn_download.setText(f'Select Streams to Download')
+            self.btn_download.setText('Select Streams to Download')
         self.set_thumbnail(item, column)
 
     def get_proxies(self):
