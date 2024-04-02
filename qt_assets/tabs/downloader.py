@@ -121,10 +121,7 @@ class StreamLoader(QObject):
                                   f'Loading Stream ITAG ID: {stream.itag}')
                 if stream.video_codec is None:
                     stream_item = StreamTreeWidgetItem([
-                        f'Codec: {stream.audio_codec}, '
-                        f'ABR: {stream.abr}, '
-                        f'File Type: {stream.mime_type.split("/")[1]}, '
-                        f'Size: {stream.filesize // 1024} KB'
+                        f'Codec: {stream.audio_codec}, ', f'ABR: {stream.abr}, ', f'File Type: {stream.mime_type.split("/")[1]}, ', f'Size: {stream.filesize // 1024} KB'
                     ], f'video_{i}_stream{x}',
                        self.__download_manager, video, stream)
                     self.sig_step.emit(self.id, f'Loaded stream {x}')
@@ -135,10 +132,7 @@ class StreamLoader(QObject):
                     audio_streams.addChild(stream_item)
                 else:
                     stream_item = StreamTreeWidgetItem([
-                        f'Res: {stream.resolution}, FPS: {stream.fps}, '
-                        f' Video Codec: {stream.video_codec}, Audio Codec: {stream.audio_codec}, '
-                        f'File Type: {stream.mime_type.split("/")[1]}, '
-                        f'Size: {stream.filesize // 1024} KB'
+                        f'Res: {stream.resolution}, FPS: {stream.fps}, ', f' Video Codec: {stream.video_codec}, Audio Codec: {stream.audio_codec}, ', f'File Type: {stream.mime_type.split("/")[1]}, ', f'Size: {stream.filesize // 1024} KB'
                     ], f'video_{i}_stream{x}',
                        self.__download_manager, video, stream)
                     self.sig_step.emit(self.id, f'Loaded stream {x}')
